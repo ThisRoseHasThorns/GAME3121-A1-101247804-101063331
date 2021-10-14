@@ -19,8 +19,7 @@ public:
     bool keyPressed(const KeyboardEvent& evt);
 };
 BasicTutorial1::BasicTutorial1()
-    : ApplicationContext("Amber and Raquel's OgrePong")
-    
+    : ApplicationContext("Amber's OgrePong")
 {
 }
 
@@ -69,18 +68,22 @@ void BasicTutorial1::setup()
     Ogre::Entity* ent = scnMgr->createEntity("sphere.mesh");
     Ogre::SceneNode* node = scnMgr->getRootSceneNode()->createChildSceneNode();
     node->attachObject(ent);
-    node->setPosition(10, 5, 0);
-    node->setScale(0.01, 0.01, 0);
+    node->setPosition(5, 0, 0);
+    node->setScale(0.025, 0.025, 0.025);
 
-    //trying to test if it works
 
     ////The first thing we'll do is create an abstract Plane object. This is not the mesh, it is more of a blueprint.
-    Ogre::Entity* cubeEnt = scnMgr->createEntity("dragon.mesh");
+    Ogre::Entity* cubeEnt = scnMgr->createEntity("cube.mesh");
     Ogre::SceneNode* cubenode = scnMgr->getRootSceneNode()->createChildSceneNode();
     cubenode->attachObject(cubeEnt);
-    cubenode->setPosition(5, 5, 0);
-    cubenode->setScale(15, 15, 15);
+    cubenode->setPosition(-50, 5, 0);
+    cubenode->setScale(0.02, 0.25, 0.02);
 
+    Ogre::Entity* cubeEnt2 = scnMgr->createEntity("cube.mesh");
+    Ogre::SceneNode* cubenode2 = scnMgr->getRootSceneNode()->createChildSceneNode();
+    cubenode2->attachObject(cubeEnt2);
+    cubenode2->setPosition(50, 5, 0);
+    cubenode2->setScale(0.02, 0.25, 0.02);
    
 
     //Now we will create a new Entity using this mesh.
