@@ -19,7 +19,7 @@ public:
     bool keyPressed(const KeyboardEvent& evt);
 };
 BasicTutorial1::BasicTutorial1()
-    : ApplicationContext("Amber's OgrePong")
+    : ApplicationContext("Amber and Raquel's OgrePong (ID's 101063331 and 101247804)")
 {
 }
 
