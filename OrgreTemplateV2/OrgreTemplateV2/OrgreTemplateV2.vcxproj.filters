@@ -30,9 +30,6 @@
     <ClCompile Include="week1-5-multipleViewPorts.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Downloads\OgrePong.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\ogre-sdk-v2.1\Samples\Character\include\SinbadCharacterController.h">
