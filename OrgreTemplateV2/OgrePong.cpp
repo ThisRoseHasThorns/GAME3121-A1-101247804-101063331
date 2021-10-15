@@ -12,7 +12,7 @@ using namespace Ogre;
 using namespace OgreBites;
 
 Ogre::Vector3 translatepaddle(0, 0, 50);
-Ogre::Vector3 translateball(20, 0, 0);
+Ogre::Vector3 translateball(0, 0, 20);
 Ogre::Vector3 boundaryUp(0, 100, 0);
 Ogre::Vector3 boundaryDown(0, -100, 0);
 Ogre::Vector3 boundaryRight(100, 0, 0);
@@ -37,11 +37,11 @@ public:
 		_node->translate(translateball * evt.timeSinceLastFrame);
 		if (_node->getPosition().x >= boundaryRight.x)
 		{
-			translateball = Vector3(-20, 0, 0);
+			translateball = Vector3(0, 0, -20);
 		}
 		if (_node->getPosition().x <= boundaryLeft.x)
 		{
-			translateball = Vector3(20, 0, 0);
+			translateball = Vector3(0, 0, 20);
 		}
 
 		return true;
