@@ -71,8 +71,8 @@ public:
 			mTrayMgr->destroyWidget("TimeLeft");
 			mTrayMgr->createLabel(TL_BOTTOMRIGHT, "TimeLeft", std::to_string(TimeLeft), 150);
 		
+			mTrayMgr->showFrameStats(TL_BOTTOMRIGHT);
 		
-
 		
 		return true;
 	}
@@ -191,8 +191,10 @@ void BasicTutorial1::setup()
 	mInfoLabel = mTrayMgr->createLabel(TL_BOTTOMLEFT, "ScoreAmount:", "100", 150);
 	mInfoLabel = mTrayMgr->createLabel(TL_BOTTOMRIGHT, "Timer", "Time:", 150);
 	mInfoLabel = mTrayMgr->createLabel(TL_BOTTOMRIGHT, "TimeLeft", std::to_string(TimeLeft), 150);
-	mInfoLabel = mTrayMgr->createLabel(TL_TOPRIGHT, "Frames", "FPS:", 150);
-	mInfoLabel = mTrayMgr->createLabel(TL_TOPRIGHT, "FrameAmount", "FrameNumber", 150);
+	/*mInfoLabel = mTrayMgr->createLabel(TL_TOPRIGHT, "Frames", "FPS:", 150);*/
+	/*mInfoLabel = mTrayMgr->createLabel(TL_TOPRIGHT, "FrameAmount", "FrameNumber", 150);*/
+	mTrayMgr->showFrameStats(TL_BOTTOMRIGHT);
+
 	
 	// and tell it to render into the main window
 	getRenderWindow()->addViewport(cam);
