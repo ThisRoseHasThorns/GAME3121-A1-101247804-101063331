@@ -5,30 +5,36 @@
 #include "OgreApplicationContext.h"
 #include <iostream>
 #include "OgreTrays.h"
+#include <Windows.h>
 
 //#include "ConsoleColor.h"
 //Hi I updated it again test
 using namespace Ogre;
 using namespace OgreBites;
+using namespace std::chrono;
 
+int lives = 5;
+int score = 10;
+int TimeLeft = 180;
 Ogre::Vector3 translatepaddle(0, 0, 50);
-Ogre::Vector3 translateball(20, 0, 0);
-Ogre::Vector3 boundaryUp(0, 100, 0);
-Ogre::Vector3 boundaryDown(0, -100, 0);
+Ogre::Vector3 translateball(-20, 0, 0);
+Ogre::Vector3 boundaryUp(0, 50, 0);
+Ogre::Vector3 boundaryDown(0, -50, 0);
 Ogre::Vector3 boundaryRight(100, 0, 0);
 Ogre::Vector3 boundaryLeft(-100, 0, 0);
-
+OgreBites::TrayManager* mTrayMgr;
+Ogre::Timer OgreTime;
 class ExampleFrameListener : public Ogre::FrameListener
 {
 private:
 	Ogre::SceneNode* _node;
-	
+
 public:
 
 	ExampleFrameListener(Ogre::SceneNode* node)
 	{
 		_node = node;
-		
+
 	}
 
 	bool frameStarted(const Ogre::FrameEvent& evt)
@@ -38,24 +44,69 @@ public:
 		if (_node->getPosition().x >= boundaryRight.x)
 		{
 			translateball = Vector3(-20, 0, 0);
+			//lives--;
+			score++;
+			mTrayMgr->destroyWidget("ScoreAmount:");
+			mTrayMgr->createLabel(TL_BOTTOMLEFT, "ScoreAmount:", std::to_string(score), 150);
+			//_node->setPosition(Vector3(0, 0, 0));
+
 		}
 		if (_node->getPosition().x <= boundaryLeft.x)
 		{
 			translateball = Vector3(20, 0, 0);
+			//lives--;
+			score++;
+			mTrayMgr->destroyWidget("ScoreAmount:");
+			mTrayMgr->createLabel(TL_BOTTOMLEFT, "ScoreAmount:", std::to_string(score), 150);
+			//_node->setPosition(Vector3(0, 0, 0));
 		}
+		/*if (_node->getPosition().x <= boundaryUp.y)
+		{
+			translateball = Vector3(0, 0, -20);
+			lives--;
+			score++;
+			mTrayMgr->destroyWidget("ScoreAmount:");
+			mTrayMgr->createLabel(TL_BOTTOMLEFT, "ScoreAmount:", std::to_string(score), 150);
+			_node->setPosition(Vector3(0, 0, 0));
+		}
+		if (_node->getPosition().x <= boundaryDown.y)
+		{
+			translateball = Vector3(0, 0, 20);
+			lives--;
+			score++;
+			mTrayMgr->destroyWidget("ScoreAmount:");
+			mTrayMgr->createLabel(TL_BOTTOMLEFT, "ScoreAmount:", std::to_string(score), 150);
+			_node->setPosition(Vector3(0, 0, 0));
+		}*/
+		
+		
+
+		if (TimeLeft > 0)
+		{
+			TimeLeft--;
+			//If we do need a timer this needs to be implemented
+
+
+
+		}
+		mTrayMgr->destroyWidget("TimeLeft");
+		mTrayMgr->createLabel(TL_BOTTOMRIGHT, "TimeLeft", std::to_string(TimeLeft), 150);
+
+		mTrayMgr->showFrameStats(TL_BOTTOMRIGHT);
+
 
 		return true;
 	}
 };
 
-	
+
 
 
 
 class BasicTutorial1
 	: public ApplicationContext
 	, public InputListener
-	
+
 
 {
 public:
@@ -65,32 +116,33 @@ public:
 	OgreBites::TrayListener myTrayListener;
 	OgreBites::Label* mInfoLabel;
 	void setup();
-	
+
 	bool keyPressed(const KeyboardEvent& evt);
 	void createFrameListener();
-	
+
 	/*virtual bool frameRenderingQueued(const FrameEvent&);*/
 private:
 	SceneNode* Ballnode;
 	SceneNode* Paddlenode;
 	Root* root;
 	SceneManager* scnMgr;
+
 public:
-	
+
 	virtual bool frameRenderingQueued(const FrameEvent& evt) {
 
-		
+
 		Paddlenode->setPosition(translatepaddle);
 		return true;
 		std::cout << translatepaddle << std::endl;
-		
+
 		std::cout << "dumbball" << translateball << std::endl;
 
 
 
 		std::cout << Ballnode->getPosition().x;
-	};
 
+	};
 
 
 };
@@ -110,13 +162,13 @@ BasicTutorial1::BasicTutorial1()
 
 void BasicTutorial1::setup()
 {
-	
+
 	//std::cout << white;
 	// do not forget to call the base first
 	ApplicationContext::setup();
 	addInputListener(this);
 
-	
+
 	// get a pointer to the already created root
 	Root* root = getRoot();
 	SceneManager* scnMgr = root->createSceneManager();
@@ -149,18 +201,21 @@ void BasicTutorial1::setup()
 	cam->setAutoAspectRatio(true);
 	camNode->attachObject(cam);
 	//camNode->setPosition(0, 47, 222);
-	OgreBites::TrayManager* mTrayMgr = new OgreBites::TrayManager("InterfaceName", getRenderWindow());
+	mTrayMgr = new OgreBites::TrayManager("InterfaceName", getRenderWindow());
 	scnMgr->addRenderQueueListener(mOverlaySystem);
 	addInputListener(mTrayMgr);
 	int a = 5;
+
 	mInfoLabel = mTrayMgr->createLabel(TL_TOPLEFT, "Lives", "Lives:", 150);
-	mInfoLabel = mTrayMgr->createLabel(TL_TOPLEFT, "NumberOfLives", "3", 150);
-	mInfoLabel = mTrayMgr->createLabel(TL_TOPLEFT, "Score", "Score:", 150);
-	mInfoLabel = mTrayMgr->createLabel(TL_TOPLEFT, "ScoreAmount:", "100", 150);
-	mInfoLabel = mTrayMgr->createLabel(TL_TOPRIGHT, "Timer", "Time:", 150);
-	mInfoLabel = mTrayMgr->createLabel(TL_TOPRIGHT, "TimeLeft", "3:00", 150);
-	mInfoLabel = mTrayMgr->createLabel(TL_TOPRIGHT, "Frames", "FPS:", 150);
-	mInfoLabel = mTrayMgr->createLabel(TL_TOPRIGHT, "FrameAmount", "FrameNumber", 150);
+	mInfoLabel = mTrayMgr->createLabel(TL_TOPLEFT, "NumberOfLives", std::to_string(lives), 150);
+	mInfoLabel = mTrayMgr->createLabel(TL_BOTTOMLEFT, "Score", "Score:", 150);
+	mInfoLabel = mTrayMgr->createLabel(TL_BOTTOMLEFT, "ScoreAmount:", std::to_string(score), 150);
+	mInfoLabel = mTrayMgr->createLabel(TL_BOTTOMRIGHT, "Timer", "Time:", 150);
+	mInfoLabel = mTrayMgr->createLabel(TL_BOTTOMRIGHT, "TimeLeft", std::to_string(TimeLeft), 150);
+	/*mInfoLabel = mTrayMgr->createLabel(TL_TOPRIGHT, "Frames", "FPS:", 150);*/
+	/*mInfoLabel = mTrayMgr->createLabel(TL_TOPRIGHT, "FrameAmount", "FrameNumber", 150);*/
+	mTrayMgr->showFrameStats(TL_BOTTOMRIGHT);
+
 
 	// and tell it to render into the main window
 	getRenderWindow()->addViewport(cam);
@@ -237,12 +292,13 @@ void BasicTutorial1::setup()
 	scnMgr->getRootSceneNode()->addChild(Paddlenode);
 	Paddlenode->setPosition(Ogre::Vector3(0.0f, 0, 50.0f));
 	Paddlenode->setScale(Ogre::Vector3(7.0, 0.1, 0.2));
-	
+
 	createFrameListener();
 
 
 	// -- tutorial section end --
 }
+
 
 
 bool BasicTutorial1::keyPressed(const KeyboardEvent& evt)
@@ -283,7 +339,9 @@ void BasicTutorial1::createFrameListener()
 	mRoot->addFrameListener(FrameListener);
 	Ogre::FrameListener* FrameListener2 = new ExampleFrameListener(Paddlenode);
 	mRoot->addFrameListener(FrameListener2);
+
 }
+
 
 
 int main(int argc, char** argv)
@@ -305,5 +363,3 @@ int main(int argc, char** argv)
 }
 
 //! [fullsource]
-
-
