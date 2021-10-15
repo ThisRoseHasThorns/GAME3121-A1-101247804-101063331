@@ -6,153 +6,245 @@
 #include <iostream>
 #include "OgreTrays.h"
 
+//#include "ConsoleColor.h"
+
 using namespace Ogre;
 using namespace OgreBites;
 
-Ogre::Vector3 translatepaddle(-80, 0, 0);
+Ogre::Vector3 translatepaddle(0, 0, 50);
 Ogre::Vector3 translateball(0.6, 0, 0);
 Ogre::Vector3 boundaryUp(0, 0, -50);
 Ogre::Vector3 boundaryDown(0, 0, 50);
-Ogre::Vector3 boundaryRight(90, 0, 0);
-Ogre::Vector3 boundaryLeft(-100, 0, 0);
-
+Ogre::Vector3 boundaryRight(70, 70, 70);
+Ogre::Vector3 boundaryLeft(-70, -70, -70);
 class BasicTutorial1
-    : public ApplicationContext
-    , public InputListener
+	: public ApplicationContext
+	, public InputListener
 {
 public:
-    BasicTutorial1();
-    virtual ~BasicTutorial1() {}
+	BasicTutorial1();
+	virtual ~BasicTutorial1() {}
 
-    OgreBites::TrayListener myTrayListener;
-    OgreBites::Label* mInfoLabel;
-    void setup();
-    bool keyPressed(const KeyboardEvent& evt);
-    virtual bool frameRenderingQueued(const FrameEvent&);
+	OgreBites::TrayListener myTrayListener;
+	OgreBites::Label* mInfoLabel;
+	void setup();
+	bool keyPressed(const KeyboardEvent& evt);
+	virtual bool frameRenderingQueued(const FrameEvent&);
 
-    SceneNode* Ballnode;
-    SceneNode* Paddlenode;
+	SceneNode* Ballnode;
+	SceneNode* Paddlenode;
+
+
 };
 bool BasicTutorial1::frameRenderingQueued(const FrameEvent& evt) {
 
-    //Ballnode->translate(translateball);
-    //Paddlenode->setPosition(translatepaddle);
-    return true;
-    std::cout << translatepaddle << std::endl;
-    //Cant get position of ball to reflext translation. No idea how. 
-    std::cout << "dumbball" << translateball << std::endl;
+	Ballnode->translate(translateball);
+	Paddlenode->setPosition(translatepaddle);
+	return true;
+	std::cout << translatepaddle << std::endl;
+	//Cant get position of ball to reflext translation. No idea how. 
+	std::cout << "dumbball" << translateball << std::endl;
 
 };
+
+
+
+
+
+
 BasicTutorial1::BasicTutorial1()
-    : ApplicationContext("Amber and Raquel's OgrePong (ID's 101063331 and 101247804)")
+	: ApplicationContext("Amber and Raquel's OgrePong (ID's 101063331 and 101247804)")
 {
 }
 
 
+
+
 void BasicTutorial1::setup()
 {
-    // do not forget to call the base first
-    ApplicationContext::setup();
-    addInputListener(this);
+	//std::cout << white;
+	// do not forget to call the base first
+	ApplicationContext::setup();
+	addInputListener(this);
 
-    // get a pointer to the already created root
-    Root* root = getRoot();
-    SceneManager* scnMgr = root->createSceneManager();
+	// get a pointer to the already created root
+	Root* root = getRoot();
+	SceneManager* scnMgr = root->createSceneManager();
 
-    // register our scene with the RTSS
-    RTShader::ShaderGenerator* shadergen = RTShader::ShaderGenerator::getSingletonPtr();
-    shadergen->addSceneManager(scnMgr);
+	// register our scene with the RTSS
+	RTShader::ShaderGenerator* shadergen = RTShader::ShaderGenerator::getSingletonPtr();
+	shadergen->addSceneManager(scnMgr);
 
-    // without light we would just get a black screen    
-    Ogre::Light* light = scnMgr->createLight("MainLight");
-    Ogre::SceneNode* lightNode = scnMgr->getRootSceneNode()->createChildSceneNode();
-    lightNode->setPosition(0, 10, 15);
-    lightNode->attachObject(light);
+	// -- tutorial section start --
+	//! [turnlights]
+	scnMgr->setAmbientLight(ColourValue(0.5, 0.5, 0.5));
+	//! [turnlights]
 
-    scnMgr->setAmbientLight(ColourValue(0.5, 0.5, 0.5));
+	//! [newlight]
+	Light* light = scnMgr->createLight("MainLight");
+	SceneNode* lightNode = scnMgr->getRootSceneNode()->createChildSceneNode();
+	lightNode->attachObject(light);
+	//! [newlight]
 
-    // also need to tell where we are
-    Ogre::SceneNode* camNode = scnMgr->getRootSceneNode()->createChildSceneNode();
-    camNode->setPosition(0, 0, 140);
-    camNode->lookAt(Ogre::Vector3(0, 0, -1), Ogre::Node::TS_PARENT);
+	//! [lightpos]
+	lightNode->setPosition(20, 80, 50);
+	//! [lightpos]
 
-    // create the camera
-    Ogre::Camera* cam = scnMgr->createCamera("myCam");
-    cam->setNearClipDistance(5); // specific to this sample
-    cam->setAutoAspectRatio(true);
-    camNode->attachObject(cam);
-    camNode->lookAt(Vector3(0, 0, 0), Node::TransformSpace::TS_WORLD);
-    //// and tell it to render into the main window
-    //getRenderWindow()->addViewport(cam);
+	//! [camera]
+	SceneNode* camNode = scnMgr->getRootSceneNode()->createChildSceneNode();
 
-    OgreBites::TrayManager* mTrayMgr = new OgreBites::TrayManager("InterfaceName", getRenderWindow());
-    scnMgr->addRenderQueueListener(mOverlaySystem);
-    addInputListener(mTrayMgr);
-    int a = 5;
-    mInfoLabel = mTrayMgr->createLabel(TL_TOPLEFT, "Lives", "Lives:", 150);
-    mInfoLabel = mTrayMgr->createLabel(TL_TOPLEFT, "NumberOfLives", "3", 150);
-    mInfoLabel = mTrayMgr->createLabel(TL_TOPLEFT, "Score", "Score:", 150);
-    mInfoLabel = mTrayMgr->createLabel(TL_TOPLEFT, "ScoreAmount:", "100", 150);
-    mInfoLabel = mTrayMgr->createLabel(TL_TOPRIGHT, "Timer", "Time:", 150);
-    mInfoLabel = mTrayMgr->createLabel(TL_TOPRIGHT, "TimeLeft", "3:00", 150);
-    mInfoLabel = mTrayMgr->createLabel(TL_TOPRIGHT, "Frames", "FPS:", 150);
-    mInfoLabel = mTrayMgr->createLabel(TL_TOPRIGHT, "FrameAmount", "FrameNumber", 150);
+	// create the camera
+	Camera* cam = scnMgr->createCamera("myCam");
+	cam->setNearClipDistance(5); // specific to this sample
+	cam->setAutoAspectRatio(true);
+	camNode->attachObject(cam);
+	//camNode->setPosition(0, 47, 222);
+	OgreBites::TrayManager* mTrayMgr = new OgreBites::TrayManager("InterfaceName", getRenderWindow());
+	scnMgr->addRenderQueueListener(mOverlaySystem);
+	addInputListener(mTrayMgr);
+	int a = 5;
+	mInfoLabel = mTrayMgr->createLabel(TL_TOPLEFT, "Lives", "Lives:", 150);
+	mInfoLabel = mTrayMgr->createLabel(TL_TOPLEFT, "NumberOfLives", "3", 150);
+	mInfoLabel = mTrayMgr->createLabel(TL_TOPLEFT, "Score", "Score:", 150);
+	mInfoLabel = mTrayMgr->createLabel(TL_TOPLEFT, "ScoreAmount:", "100", 150);
+	mInfoLabel = mTrayMgr->createLabel(TL_TOPRIGHT, "Timer", "Time:", 150);
+	mInfoLabel = mTrayMgr->createLabel(TL_TOPRIGHT, "TimeLeft", "3:00", 150);
+	mInfoLabel = mTrayMgr->createLabel(TL_TOPRIGHT, "Frames", "FPS:", 150);
+	mInfoLabel = mTrayMgr->createLabel(TL_TOPRIGHT, "FrameAmount", "FrameNumber", 150);
 
-    Viewport* vp = getRenderWindow()->addViewport(cam);
-   
-    vp->setBackgroundColour(ColourValue(0.2, 0.2, 0.2));
+	// and tell it to render into the main window
+	getRenderWindow()->addViewport(cam);
+	//! [camera]
 
-    // finally something to render
-    Ogre::Entity* ent = scnMgr->createEntity("sphere.mesh");
-    Ogre::SceneNode* node = scnMgr->getRootSceneNode()->createChildSceneNode();
-    node->attachObject(ent);
-    node->setPosition(70, 0, 0);
-    node->setScale(0.025, 0.025, 0.025);
+	//! [entity1]
+
+	//! [entity1]
+
+	//! [entity1node]
+	SceneNode* ogreNode = scnMgr->getRootSceneNode()->createChildSceneNode();
+
+	//! [entity1node]
+
+	//! [entity1nodeattach]
+
+	//! [entity1nodeattach]
+
+	//! [cameramove]
+	camNode->setPosition(0, 200, 0);
+	//! [cameramove]
+	camNode->lookAt(Vector3(0, 0, 0), Node::TransformSpace::TS_WORLD);
+
+	//Now, let's create another Entity and SceneNode, but this time we'll give it a new position.
 
 
-    ////The first thing we'll do is create an abstract Plane object. This is not the mesh, it is more of a blueprint.
-    Ogre::Entity* cubeEnt = scnMgr->createEntity("cube.mesh");
-    Ogre::SceneNode* cubenode = scnMgr->getRootSceneNode()->createChildSceneNode();
-    cubenode->attachObject(cubeEnt);
-    cubenode->setPosition(0, -45, 0);
-    cubenode->setScale(0.3, 0.02, 0.02);
+	//by default it's true
 
-    //Now we will create a new Entity using this mesh.
-    //We want to tell our SceneManager not to cast shadows from our ground Entity. It would just be a waste. Don't get confused, this means the ground won't cast a shadow, it doesn't mean we can't cast shadows on to the ground.
-   /* Entity* groundEntity = scnMgr->createEntity("ground");
-    scnMgr->getRootSceneNode()->createChildSceneNode()->attachObject(groundEntity);
-    groundEntity->setCastShadows(false);
-    groundEntity->setMaterialName("Examples/Rockwall");*/
-    //And finally we need to give our ground a material.
-    
-    
 
+	//root node doesn't have a name
+
+
+
+
+	////! [entity2]
+	//Entity* ogreEntity2 = scnMgr->createEntity("ogrehead.mesh");
+	//SceneNode* ogreNode2 = scnMgr->getRootSceneNode()->createChildSceneNode(Vector3(84, 48, 0));
+	//ogreNode2->attachObject(ogreEntity2);
+	////! [entity2]
+
+	//! [entity3]
+
+	//! [entity4]
+	Plane plane(Vector3::UNIT_Y, 0);
+	MeshManager::getSingleton().createPlane(
+		"Ball", RGN_DEFAULT,
+		plane,
+		10, 10, 20, 20,
+		true,
+		1, 5, 5,
+		Vector3::UNIT_Z);
+
+	Entity* ent = scnMgr->createEntity("Ball");
+	ent->setCastShadows(false);
+	Ballnode = scnMgr->createSceneNode("Character");
+	Ballnode->attachObject(ent);
+	scnMgr->getRootSceneNode()->addChild(Ballnode);
+	Ballnode->setPosition(Ogre::Vector3(0.0f, 0.0f, 0.0f));
+	//And finally we need to give our ground a material.
+
+	Plane plane2(Vector3::UNIT_Y, 0);
+	MeshManager::getSingleton().createPlane(
+		"Paddle", RGN_DEFAULT,
+		plane,
+		8, 70, 20, 20,
+		true,
+		5, 5, 5,
+		Vector3::UNIT_Z);
+
+	Entity* groundEntity2 = scnMgr->createEntity("Paddle");
+	ent->setCastShadows(false);
+	Paddlenode = scnMgr->createSceneNode("Paddle1");
+	Paddlenode->attachObject(groundEntity2);
+	scnMgr->getRootSceneNode()->addChild(Paddlenode);
+	Paddlenode->setPosition(Ogre::Vector3(0.0f, 0, 50.0f));
+	Paddlenode->setScale(Ogre::Vector3(7.0, 0.1, 0.2));
+	
+
+
+
+	// -- tutorial section end --
 }
 
 
 bool BasicTutorial1::keyPressed(const KeyboardEvent& evt)
 {
-    if (evt.keysym.sym == SDLK_ESCAPE)
-    {
-        getRoot()->queueEndRendering();
-    }
-    return true;
+	switch (evt.keysym.sym)
+	{
+	case SDLK_ESCAPE:
+		getRoot()->queueEndRendering();
+		break;
+	case SDLK_LEFT:
+		translatepaddle += Ogre::Vector3(-10, 0, 0);
+		std::cout << "dumb up translate:" << translatepaddle << std::endl;
+		if (translatepaddle.x <= boundaryLeft.x)
+		{
+			translatepaddle = Ogre::Vector3(-80, 0, 50);
+		}
+		break;
+	case SDLK_RIGHT:
+		translatepaddle += Ogre::Vector3(10, 0, 0);
+		std::cout << "dumb down" << translatepaddle << std::endl;
+		if (translatepaddle.x >= boundaryRight.x)
+		{
+			translatepaddle = Ogre::Vector3(80, 0, 50);
+		}
+		break;
 
+	default:
+		break;
+	}
+	return true;
 }
+
+
+
+
+
 int main(int argc, char** argv)
 {
-    try
-    {
-        BasicTutorial1 app;
-        app.initApp();
-        app.getRoot()->startRendering();
-        app.closeApp();
-    }
-    catch (const std::exception& e)
-    {
-        std::cerr << "Error occurred during execution: " << e.what() << '\n';
-        return 1;
-    }
+	try
+	{
+		BasicTutorial1 app;
+		app.initApp();
+		app.getRoot()->startRendering();
+		app.closeApp();
+	}
+	catch (const std::exception& e)
+	{
+		std::cerr << "Error occurred during execution: " << e.what() << '\n';
+		return 1;
+	}
 
-    return 0;
+	return 0;
 }
+
+//! [fullsource]
