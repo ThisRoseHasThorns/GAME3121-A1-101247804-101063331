@@ -2,10 +2,19 @@
 #include "OgreApplicationContext.h"
 #include "OgreInput.h"
 #include "OgreRTShaderSystem.h"
+#include "OgreApplicationContext.h"
 #include <iostream>
+#include "OgreTrays.h"
 
 using namespace Ogre;
 using namespace OgreBites;
+
+Ogre::Vector3 translatepaddle(-80, 0, 0);
+Ogre::Vector3 translateball(0.6, 0, 0);
+Ogre::Vector3 boundaryUp(0, 0, -50);
+Ogre::Vector3 boundaryDown(0, 0, 50);
+Ogre::Vector3 boundaryRight(90, 0, 0);
+Ogre::Vector3 boundaryLeft(-100, 0, 0);
 
 class BasicTutorial1
     : public ApplicationContext
@@ -15,8 +24,24 @@ public:
     BasicTutorial1();
     virtual ~BasicTutorial1() {}
 
+    OgreBites::TrayListener myTrayListener;
+    OgreBites::Label* mInfoLabel;
     void setup();
     bool keyPressed(const KeyboardEvent& evt);
+    virtual bool frameRenderingQueued(const FrameEvent&);
+
+    SceneNode* Ballnode;
+    SceneNode* Paddlenode;
+};
+bool BasicTutorial1::frameRenderingQueued(const FrameEvent& evt) {
+
+    //Ballnode->translate(translateball);
+    //Paddlenode->setPosition(translatepaddle);
+    return true;
+    std::cout << translatepaddle << std::endl;
+    //Cant get position of ball to reflext translation. No idea how. 
+    std::cout << "dumbball" << translateball << std::endl;
+
 };
 BasicTutorial1::BasicTutorial1()
     : ApplicationContext("Amber and Raquel's OgrePong (ID's 101063331 and 101247804)")
@@ -60,6 +85,19 @@ void BasicTutorial1::setup()
     //// and tell it to render into the main window
     //getRenderWindow()->addViewport(cam);
 
+    OgreBites::TrayManager* mTrayMgr = new OgreBites::TrayManager("InterfaceName", getRenderWindow());
+    scnMgr->addRenderQueueListener(mOverlaySystem);
+    addInputListener(mTrayMgr);
+    int a = 5;
+    mInfoLabel = mTrayMgr->createLabel(TL_TOPLEFT, "Lives", "Lives:", 150);
+    mInfoLabel = mTrayMgr->createLabel(TL_TOPLEFT, "NumberOfLives", "3", 150);
+    mInfoLabel = mTrayMgr->createLabel(TL_TOPLEFT, "Score", "Score:", 150);
+    mInfoLabel = mTrayMgr->createLabel(TL_TOPLEFT, "ScoreAmount:", "100", 150);
+    mInfoLabel = mTrayMgr->createLabel(TL_TOPRIGHT, "Timer", "Time:", 150);
+    mInfoLabel = mTrayMgr->createLabel(TL_TOPRIGHT, "TimeLeft", "3:00", 150);
+    mInfoLabel = mTrayMgr->createLabel(TL_TOPRIGHT, "Frames", "FPS:", 150);
+    mInfoLabel = mTrayMgr->createLabel(TL_TOPRIGHT, "FrameAmount", "FrameNumber", 150);
+
     Viewport* vp = getRenderWindow()->addViewport(cam);
    
     vp->setBackgroundColour(ColourValue(0.2, 0.2, 0.2));
@@ -68,7 +106,7 @@ void BasicTutorial1::setup()
     Ogre::Entity* ent = scnMgr->createEntity("sphere.mesh");
     Ogre::SceneNode* node = scnMgr->getRootSceneNode()->createChildSceneNode();
     node->attachObject(ent);
-    node->setPosition(5, 0, 0);
+    node->setPosition(70, 0, 0);
     node->setScale(0.025, 0.025, 0.025);
 
 
@@ -76,15 +114,8 @@ void BasicTutorial1::setup()
     Ogre::Entity* cubeEnt = scnMgr->createEntity("cube.mesh");
     Ogre::SceneNode* cubenode = scnMgr->getRootSceneNode()->createChildSceneNode();
     cubenode->attachObject(cubeEnt);
-    cubenode->setPosition(-50, 5, 0);
-    cubenode->setScale(0.02, 0.25, 0.02);
-
-    Ogre::Entity* cubeEnt2 = scnMgr->createEntity("cube.mesh");
-    Ogre::SceneNode* cubenode2 = scnMgr->getRootSceneNode()->createChildSceneNode();
-    cubenode2->attachObject(cubeEnt2);
-    cubenode2->setPosition(50, 5, 0);
-    cubenode2->setScale(0.02, 0.25, 0.02);
-   
+    cubenode->setPosition(0, -45, 0);
+    cubenode->setScale(0.3, 0.02, 0.02);
 
     //Now we will create a new Entity using this mesh.
     //We want to tell our SceneManager not to cast shadows from our ground Entity. It would just be a waste. Don't get confused, this means the ground won't cast a shadow, it doesn't mean we can't cast shadows on to the ground.
