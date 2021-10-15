@@ -5,19 +5,24 @@
 #include "OgreApplicationContext.h"
 #include <iostream>
 #include "OgreTrays.h"
+#include <Windows.h>
 
 //#include "ConsoleColor.h"
 //Hi I updated it again test
 using namespace Ogre;
 using namespace OgreBites;
+using namespace std::chrono;
 
+int lives = 5;
+int TimeLeft = 180;
 Ogre::Vector3 translatepaddle(0, 0, 50);
 Ogre::Vector3 translateball(20, 0, 0);
 Ogre::Vector3 boundaryUp(0, 100, 0);
 Ogre::Vector3 boundaryDown(0, -100, 0);
 Ogre::Vector3 boundaryRight(100, 0, 0);
 Ogre::Vector3 boundaryLeft(-100, 0, 0);
-
+OgreBites::TrayManager* mTrayMgr;
+Ogre::Timer OgreTime;
 class ExampleFrameListener : public Ogre::FrameListener
 {
 private:
@@ -31,19 +36,44 @@ public:
 		
 	}
 
-	bool frameStarted(const Ogre::FrameEvent& evt)
+	 bool frameStarted(const Ogre::FrameEvent& evt)
 	{
 		//_node->translate(Ogre::Vector3(0.1, 0, 0));
 		_node->translate(translateball * evt.timeSinceLastFrame);
 		if (_node->getPosition().x >= boundaryRight.x)
 		{
 			translateball = Vector3(-20, 0, 0);
+			lives--;
+			mTrayMgr->destroyWidget("NumberOfLives");
+			mTrayMgr->createLabel(TL_TOPLEFT, "NumberOfLives", std::to_string(lives), 150);
+			_node->setPosition(Vector3(0, 0, 0));
+			
 		}
 		if (_node->getPosition().x <= boundaryLeft.x)
 		{
 			translateball = Vector3(20, 0, 0);
+			lives--;
+			mTrayMgr->destroyWidget("NumberOfLives");
+			mTrayMgr->createLabel(TL_TOPLEFT, "NumberOfLives", std::to_string(lives), 150);
+			_node->setPosition(Vector3(0, 0, 0));
 		}
 
+		
+
+		if (TimeLeft > 0)
+		{
+			TimeLeft--;
+			//If we do need a timer this needs to be implemented
+
+
+
+		 }
+			mTrayMgr->destroyWidget("TimeLeft");
+			mTrayMgr->createLabel(TL_BOTTOMRIGHT, "TimeLeft", std::to_string(TimeLeft), 150);
+		
+		
+
+		
 		return true;
 	}
 };
@@ -75,6 +105,7 @@ private:
 	SceneNode* Paddlenode;
 	Root* root;
 	SceneManager* scnMgr;
+	
 public:
 	
 	virtual bool frameRenderingQueued(const FrameEvent& evt) {
@@ -85,14 +116,14 @@ public:
 		std::cout << translatepaddle << std::endl;
 		
 		std::cout << "dumbball" << translateball << std::endl;
-
-
+		
+		
 
 		std::cout << Ballnode->getPosition().x;
+		
 	};
-
-
-
+	
+	
 };
 
 
@@ -149,19 +180,20 @@ void BasicTutorial1::setup()
 	cam->setAutoAspectRatio(true);
 	camNode->attachObject(cam);
 	//camNode->setPosition(0, 47, 222);
-	OgreBites::TrayManager* mTrayMgr = new OgreBites::TrayManager("InterfaceName", getRenderWindow());
+	mTrayMgr = new OgreBites::TrayManager("InterfaceName", getRenderWindow());
 	scnMgr->addRenderQueueListener(mOverlaySystem);
 	addInputListener(mTrayMgr);
 	int a = 5;
+	
 	mInfoLabel = mTrayMgr->createLabel(TL_TOPLEFT, "Lives", "Lives:", 150);
-	mInfoLabel = mTrayMgr->createLabel(TL_TOPLEFT, "NumberOfLives", "3", 150);
-	mInfoLabel = mTrayMgr->createLabel(TL_TOPLEFT, "Score", "Score:", 150);
-	mInfoLabel = mTrayMgr->createLabel(TL_TOPLEFT, "ScoreAmount:", "100", 150);
-	mInfoLabel = mTrayMgr->createLabel(TL_TOPRIGHT, "Timer", "Time:", 150);
-	mInfoLabel = mTrayMgr->createLabel(TL_TOPRIGHT, "TimeLeft", "3:00", 150);
+	mInfoLabel = mTrayMgr->createLabel(TL_TOPLEFT, "NumberOfLives", std::to_string(lives), 150);
+	mInfoLabel = mTrayMgr->createLabel(TL_BOTTOMLEFT, "Score", "Score:", 150);
+	mInfoLabel = mTrayMgr->createLabel(TL_BOTTOMLEFT, "ScoreAmount:", "100", 150);
+	mInfoLabel = mTrayMgr->createLabel(TL_BOTTOMRIGHT, "Timer", "Time:", 150);
+	mInfoLabel = mTrayMgr->createLabel(TL_BOTTOMRIGHT, "TimeLeft", std::to_string(TimeLeft), 150);
 	mInfoLabel = mTrayMgr->createLabel(TL_TOPRIGHT, "Frames", "FPS:", 150);
 	mInfoLabel = mTrayMgr->createLabel(TL_TOPRIGHT, "FrameAmount", "FrameNumber", 150);
-
+	
 	// and tell it to render into the main window
 	getRenderWindow()->addViewport(cam);
 	//! [camera]
@@ -240,9 +272,10 @@ void BasicTutorial1::setup()
 	
 	createFrameListener();
 
-
+	
 	// -- tutorial section end --
 }
+  
 
 
 bool BasicTutorial1::keyPressed(const KeyboardEvent& evt)
@@ -283,7 +316,9 @@ void BasicTutorial1::createFrameListener()
 	mRoot->addFrameListener(FrameListener);
 	Ogre::FrameListener* FrameListener2 = new ExampleFrameListener(Paddlenode);
 	mRoot->addFrameListener(FrameListener2);
+	
 }
+
 
 
 int main(int argc, char** argv)
