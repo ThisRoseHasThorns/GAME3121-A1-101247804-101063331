@@ -7,19 +7,56 @@
 #include "OgreTrays.h"
 
 //#include "ConsoleColor.h"
-
+//Hi I updated it again test
 using namespace Ogre;
 using namespace OgreBites;
 
 Ogre::Vector3 translatepaddle(0, 0, 50);
-Ogre::Vector3 translateball(0.6, 0, 0);
-Ogre::Vector3 boundaryUp(0, 0, -50);
-Ogre::Vector3 boundaryDown(0, 0, 50);
-Ogre::Vector3 boundaryRight(70, 70, 70);
-Ogre::Vector3 boundaryLeft(-70, -70, -70);
+Ogre::Vector3 translateball(20, 0, 0);
+Ogre::Vector3 boundaryUp(0, 100, 0);
+Ogre::Vector3 boundaryDown(0, -100, 0);
+Ogre::Vector3 boundaryRight(100, 0, 0);
+Ogre::Vector3 boundaryLeft(-100, 0, 0);
+
+class ExampleFrameListener : public Ogre::FrameListener
+{
+private:
+	Ogre::SceneNode* _node;
+	
+public:
+
+	ExampleFrameListener(Ogre::SceneNode* node)
+	{
+		_node = node;
+		
+	}
+
+	bool frameStarted(const Ogre::FrameEvent& evt)
+	{
+		//_node->translate(Ogre::Vector3(0.1, 0, 0));
+		_node->translate(translateball * evt.timeSinceLastFrame);
+		if (_node->getPosition().x >= boundaryRight.x)
+		{
+			translateball = Vector3(-20, 0, 0);
+		}
+		if (_node->getPosition().x <= boundaryLeft.x)
+		{
+			translateball = Vector3(20, 0, 0);
+		}
+
+		return true;
+	}
+};
+
+	
+
+
+
 class BasicTutorial1
 	: public ApplicationContext
 	, public InputListener
+	
+
 {
 public:
 	BasicTutorial1();
@@ -28,22 +65,33 @@ public:
 	OgreBites::TrayListener myTrayListener;
 	OgreBites::Label* mInfoLabel;
 	void setup();
+	
 	bool keyPressed(const KeyboardEvent& evt);
-	virtual bool frameRenderingQueued(const FrameEvent&);
-
+	void createFrameListener();
+	
+	/*virtual bool frameRenderingQueued(const FrameEvent&);*/
+private:
 	SceneNode* Ballnode;
 	SceneNode* Paddlenode;
+	Root* root;
+	SceneManager* scnMgr;
+public:
+	
+	virtual bool frameRenderingQueued(const FrameEvent& evt) {
+
+		
+		Paddlenode->setPosition(translatepaddle);
+		return true;
+		std::cout << translatepaddle << std::endl;
+		
+		std::cout << "dumbball" << translateball << std::endl;
 
 
-};
-bool BasicTutorial1::frameRenderingQueued(const FrameEvent& evt) {
 
-	Ballnode->translate(translateball);
-	Paddlenode->setPosition(translatepaddle);
-	return true;
-	std::cout << translatepaddle << std::endl;
-	//Cant get position of ball to reflext translation. No idea how. 
-	std::cout << "dumbball" << translateball << std::endl;
+		std::cout << Ballnode->getPosition().x;
+	};
+
+
 
 };
 
@@ -62,11 +110,13 @@ BasicTutorial1::BasicTutorial1()
 
 void BasicTutorial1::setup()
 {
+	
 	//std::cout << white;
 	// do not forget to call the base first
 	ApplicationContext::setup();
 	addInputListener(this);
 
+	
 	// get a pointer to the already created root
 	Root* root = getRoot();
 	SceneManager* scnMgr = root->createSceneManager();
@@ -188,7 +238,7 @@ void BasicTutorial1::setup()
 	Paddlenode->setPosition(Ogre::Vector3(0.0f, 0, 50.0f));
 	Paddlenode->setScale(Ogre::Vector3(7.0, 0.1, 0.2));
 	
-
+	createFrameListener();
 
 
 	// -- tutorial section end --
@@ -227,6 +277,13 @@ bool BasicTutorial1::keyPressed(const KeyboardEvent& evt)
 
 
 
+void BasicTutorial1::createFrameListener()
+{
+	Ogre::FrameListener* FrameListener = new ExampleFrameListener(Ballnode);
+	mRoot->addFrameListener(FrameListener);
+	Ogre::FrameListener* FrameListener2 = new ExampleFrameListener(Paddlenode);
+	mRoot->addFrameListener(FrameListener2);
+}
 
 
 int main(int argc, char** argv)
@@ -248,3 +305,5 @@ int main(int argc, char** argv)
 }
 
 //! [fullsource]
+
+
