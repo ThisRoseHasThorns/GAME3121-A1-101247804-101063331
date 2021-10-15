@@ -17,9 +17,9 @@ int lives = 5;
 int score = 10;
 int TimeLeft = 180;
 Ogre::Vector3 translatepaddle(0, 0, 50);
-Ogre::Vector3 translateball(-20, 0, 0);
-Ogre::Vector3 boundaryUp(0, 50, 0);
-Ogre::Vector3 boundaryDown(0, -50, 0);
+Ogre::Vector3 translateball(0, 0, 20);
+Ogre::Vector3 boundaryUp(0, 0, -80);
+Ogre::Vector3 boundaryDown(0, 0, 80);
 Ogre::Vector3 boundaryRight(100, 0, 0);
 Ogre::Vector3 boundaryLeft(-100, 0, 0);
 OgreBites::TrayManager* mTrayMgr;
@@ -60,7 +60,7 @@ public:
 			mTrayMgr->createLabel(TL_BOTTOMLEFT, "ScoreAmount:", std::to_string(score), 150);
 			//_node->setPosition(Vector3(0, 0, 0));
 		}
-		/*if (_node->getPosition().x <= boundaryUp.y)
+		if (_node->getPosition().z <= boundaryUp.z)
 		{
 			translateball = Vector3(0, 0, -20);
 			lives--;
@@ -69,7 +69,7 @@ public:
 			mTrayMgr->createLabel(TL_BOTTOMLEFT, "ScoreAmount:", std::to_string(score), 150);
 			_node->setPosition(Vector3(0, 0, 0));
 		}
-		if (_node->getPosition().x <= boundaryDown.y)
+		if (_node->getPosition().z >= boundaryDown.z)
 		{
 			translateball = Vector3(0, 0, 20);
 			lives--;
@@ -77,9 +77,9 @@ public:
 			mTrayMgr->destroyWidget("ScoreAmount:");
 			mTrayMgr->createLabel(TL_BOTTOMLEFT, "ScoreAmount:", std::to_string(score), 150);
 			_node->setPosition(Vector3(0, 0, 0));
-		}*/
+		}
 		
-		
+		std::cout << _node->getPosition() << std::endl;
 
 		if (TimeLeft > 0)
 		{
@@ -290,7 +290,7 @@ void BasicTutorial1::setup()
 	Paddlenode = scnMgr->createSceneNode("Paddle1");
 	Paddlenode->attachObject(groundEntity2);
 	scnMgr->getRootSceneNode()->addChild(Paddlenode);
-	Paddlenode->setPosition(Ogre::Vector3(0.0f, 0, 50.0f));
+	Paddlenode->setPosition(Ogre::Vector3(0.0f, 0, 50));
 	Paddlenode->setScale(Ogre::Vector3(7.0, 0.1, 0.2));
 
 	createFrameListener();
