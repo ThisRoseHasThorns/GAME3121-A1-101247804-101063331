@@ -105,15 +105,12 @@ public:
 			RandDirX = (rand() % MAX_NUM);
 			RandDirZ = (rand() % MAX_NUM);
 			translateball = Vector3(RandDirX, 0, -translateball.z);
-			lives--;
 			score++;
 			mTrayMgr->destroyWidget("ScoreAmount:");
 			mTrayMgr->createLabel(TL_BOTTOMLEFT, "ScoreAmount:", std::to_string(score), 150);
-<<<<<<< Updated upstream
+
 			//_node->setPosition(Vector3(0, 0, 0));
-=======
-			
->>>>>>> Stashed changes
+
 		}
 		if (_node->getPosition().z >= boundaryDown.z)
 		{
@@ -126,8 +123,12 @@ public:
 			mTrayMgr->createLabel(TL_TOPLEFT, "NumberOfLives", std::to_string(lives), 150);
 			_node->setPosition(Vector3(0, 0, 0));
 		}
-		
-		std::cout << _node->getPosition() << std::endl;
+
+		if (lives <= 0)
+		{
+			lives = 0;
+				std::cout << "GAMEOVER" << std::endl;
+		}
 
 		if (TimeLeft > 0)
 		{
