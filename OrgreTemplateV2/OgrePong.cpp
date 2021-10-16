@@ -67,15 +67,14 @@ public:
 			score++;
 			mTrayMgr->destroyWidget("ScoreAmount:");
 			mTrayMgr->createLabel(TL_BOTTOMLEFT, "ScoreAmount:", std::to_string(score), 150);
-			_node->setPosition(Vector3(0, 0, 0));
+			//_node->setPosition(Vector3(0, 0, 0));
 		}
 		if (_node->getPosition().z >= boundaryDown.z)
 		{
 			translateball = Vector3(0, 0, 20);
 			lives--;
-			score++;
-			mTrayMgr->destroyWidget("ScoreAmount:");
-			mTrayMgr->createLabel(TL_BOTTOMLEFT, "ScoreAmount:", std::to_string(score), 150);
+			mTrayMgr->destroyWidget("NumberOfLives");
+			mTrayMgr->createLabel(TL_TOPLEFT, "NumberOfLives", std::to_string(lives), 150);
 			_node->setPosition(Vector3(0, 0, 0));
 		}
 		
@@ -94,6 +93,11 @@ public:
 
 		mTrayMgr->showFrameStats(TL_BOTTOMRIGHT);
 
+
+		if (lives <= 1) 
+		{
+			lives = 6;
+		}
 
 		return true;
 	}
