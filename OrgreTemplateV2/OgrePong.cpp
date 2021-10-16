@@ -6,6 +6,8 @@
 #include <iostream>
 #include "OgreTrays.h"
 #include <Windows.h>
+#include <time.h>
+#define MAX_NUM 20
 
 //#include "ConsoleColor.h"
 //Hi I updated it again test
@@ -16,10 +18,14 @@ using namespace std::chrono;
 int lives = 5;
 int score = 10;
 int TimeLeft = 180;
+int _RandDirX = 0;
+int _RandDirZ = 0;
+int RandDirX = 0;
+int RandDirZ = 0;
 Ogre::Vector3 translatepaddle(0, 0, 50);
 Ogre::Vector3 translateball(0, 0, 20);
-Ogre::Vector3 boundaryUp(0, 0, -80);
-Ogre::Vector3 boundaryDown(0, 0, 80);
+Ogre::Vector3 boundaryUp(0, 0, -75);
+Ogre::Vector3 boundaryDown(0, 0, 75);
 Ogre::Vector3 boundaryRight(100, 0, 0);
 Ogre::Vector3 boundaryLeft(-100, 0, 0);
 OgreBites::TrayManager* mTrayMgr;
@@ -40,10 +46,40 @@ public:
 	bool frameStarted(const Ogre::FrameEvent& evt)
 	{
 		//_node->translate(Ogre::Vector3(0.1, 0, 0));
+		
 		_node->translate(translateball * evt.timeSinceLastFrame);
+
+		if (RandDirX > 15)
+		{
+			_RandDirX = 20;
+		}
+		if (RandDirX < 15 && RandDirX > 10)
+		{
+			_RandDirX = 0;
+		}
+		if (RandDirX < 10)
+		{
+			_RandDirX = -20;
+		}
+		if (RandDirZ > 15)
+		{
+			_RandDirZ = 20;
+		}
+		if (RandDirZ < 15 && RandDirZ > 10)
+		{
+			_RandDirZ = 0;
+		}
+		if (RandDirZ < 10)
+		{
+			_RandDirZ = -20;
+		}
+
 		if (_node->getPosition().x >= boundaryRight.x)
 		{
-			translateball = Vector3(-20, 0, 0);
+			srand(time(NULL));
+			RandDirX = (rand() % MAX_NUM);
+			RandDirZ = (rand() % MAX_NUM);
+			translateball = Vector3(-translateball.x, 0, _RandDirZ);
 			//lives--;
 			score++;
 			mTrayMgr->destroyWidget("ScoreAmount:");
@@ -53,7 +89,10 @@ public:
 		}
 		if (_node->getPosition().x <= boundaryLeft.x)
 		{
-			translateball = Vector3(20, 0, 0);
+			srand(time(NULL));
+			RandDirX = (rand() % MAX_NUM);
+			RandDirZ = (rand() % MAX_NUM);
+			translateball = Vector3(-translateball.x, 0, _RandDirZ);
 			//lives--;
 			score++;
 			mTrayMgr->destroyWidget("ScoreAmount:");
@@ -62,16 +101,26 @@ public:
 		}
 		if (_node->getPosition().z <= boundaryUp.z)
 		{
-			translateball = Vector3(0, 0, -20);
+			srand(time(NULL));
+			RandDirX = (rand() % MAX_NUM);
+			RandDirZ = (rand() % MAX_NUM);
+			translateball = Vector3(RandDirX, 0, -translateball.z);
 			lives--;
 			score++;
 			mTrayMgr->destroyWidget("ScoreAmount:");
 			mTrayMgr->createLabel(TL_BOTTOMLEFT, "ScoreAmount:", std::to_string(score), 150);
+<<<<<<< Updated upstream
 			//_node->setPosition(Vector3(0, 0, 0));
+=======
+			
+>>>>>>> Stashed changes
 		}
 		if (_node->getPosition().z >= boundaryDown.z)
 		{
-			translateball = Vector3(0, 0, 20);
+			srand(time(NULL));
+			RandDirX = (rand() % MAX_NUM);
+			RandDirZ = (rand() % MAX_NUM);
+			translateball = Vector3(_RandDirX, 0, _RandDirZ);
 			lives--;
 			mTrayMgr->destroyWidget("NumberOfLives");
 			mTrayMgr->createLabel(TL_TOPLEFT, "NumberOfLives", std::to_string(lives), 150);
